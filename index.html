@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>TikTok Downloader - Video HD Tanpa Watermark & MP3</title>
+    <meta name="description" content="Download video TikTok tanpa watermark (HD) dan lagu MP3 secara instan. Gratis, cepat, dan bergaya Apple Style.">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H3P9SJN80Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H3P9SJN80Y');
+    </script>
+
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --accent: #007AFF;
+            --music: #FF9500;
+            --bg: #000000;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 420px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        h1 { font-weight: 600; font-size: 24px; margin-bottom: 8px; letter-spacing: -0.5px; }
+        p.subtitle { color: #888; font-size: 14px; margin-bottom: 24px; }
+
+        .input-group { margin-bottom: 20px; }
+        input {
+            width: 100%; padding: 16px; background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border); border-radius: 14px;
+            color: white; font-size: 16px; box-sizing: border-box; outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: var(--accent); }
+
+        button.primary {
+            width: 100%; padding: 16px; background: var(--accent);
+            color: white; border: none; border-radius: 14px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        button.primary:active { transform: scale(0.98); opacity: 0.9; }
+
+        #resultArea {
+            display: none; margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+            border-top: 1px solid var(--border); padding-top: 20px;
+        }
+
+        video {
+            width: 100%; border-radius: 12px; margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background-color: #000; object-fit: cover;
+        }
+
+        /* Group Tombol Download */
+        .btn-group {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;
+        }
+        .btn-full { grid-column: span 2; }
+
+        /* Tombol Download Style */
+        button.download-btn {
+            display: flex; justify-content: center; align-items: center;
+            padding: 12px; background: rgba(255,255,255,0.1);
+            color: white; border: none; border-radius: 10px;
+            font-size: 13px; font-weight: 500; transition: background 0.2s;
+            cursor: pointer; width: 100%; font-family: inherit;
+        }
+        button.download-btn:hover { background: rgba(255,255,255,0.2); }
+        button.download-btn:disabled { opacity: 0.5; cursor: wait; }
+        
+        .btn-hd { background: rgba(0, 255, 128, 0.15) !important; color: #4fffa8 !important; }
+        .btn-music { background: rgba(255, 149, 0, 0.15) !important; color: #ffb340 !important; }
+
+        .caption-area {
+            margin-top: 15px; background: rgba(0,0,0,0.2); border-radius: 12px;
+            padding: 15px; text-align: left; border: 1px solid var(--border);
+        }
+        .caption-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .caption-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #666; font-weight: 700; }
+        .copy-btn { background: none; border: none; color: var(--accent); font-size: 12px; cursor: pointer; font-weight: 600; padding: 0; }
+        .caption-text { font-size: 13px; line-height: 1.5; color: #ddd; max-height: 100px; overflow-y: auto; white-space: pre-wrap; }
+
+        .loader {
+            display: none; border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--accent); border-radius: 50%;
+            width: 20px; height: 20px; animation: spin 1s linear infinite; margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>TikTok Downloader</h1>
+    <p class="subtitle">Video. Musik. Caption.</p>
+
+    <div class="input-group">
+        <input type="text" id="urlInput" placeholder="Tempel link TikTok...">
+    </div>
+
+    <button class="primary" onclick="fetchVideo()">Proses Link</button>
+    <div class="loader" id="loader"></div>
+
+    <div id="resultArea">
+        <video id="videoPlayer" controls loop playsinline></video>
+        
+        <div class="btn-group">
+            <button id="btnNormal" class="download-btn" onclick="forceDownload(this, 'sd')">Download SD</button>
+            <button id="btnHD" class="download-btn btn-hd" onclick="forceDownload(this, 'hd')">Video HD</button>
+            <button id="btnMusic" class="download-btn btn-music btn-full" onclick="forceDownload(this, 'mp3')">🎵 Download Musik</button>
+        </div>
+
+        <div class="caption-area">
+            <div class="caption-header">
+                <span class="caption-label">Caption</span>
+                <button class="copy-btn" onclick="copyCaption()">Salin Teks</button>
+            </div>
+            <div id="captionText" class="caption-text"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Variabel global
+    let currentData = {
+        sd: '',
+        hd: '',
+        mp3: '',
+        id: ''
+    };
+
+    async function fetchVideo() {
+        const input = document.getElementById('urlInput');
+        const resultArea = document.getElementById('resultArea');
+        const loader = document.getElementById('loader');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const btnMusic = document.getElementById('btnMusic');
+        const captionText = document.getElementById('captionText');
+
+        if (!input.value) { alert("Linknya mana bos?"); return; }
+
+        loader.style.display = 'block';
+        resultArea.style.display = 'none';
+        videoPlayer.src = "";
+        videoPlayer.poster = "";
+
+        try {
+            const targetUrl = encodeURIComponent(input.value);
+            // SUDAH DIPERBAIKI: Link hardcoded dihapus, jadi bersih
+            const apiUrl = `https://api.ryzumi.vip/api/downloader/v2/ttdl?url=https%3A%2F%2Fvm.tiktok.com%2FZSHEJsU7kNECn-2iOPg%2F=${targetUrl}`;
+            
+            const response = await fetch(apiUrl);
+            const json = await response.json();
+
+            if (json.data && json.data.video_data) {
+                const data = json.data;
+                
+                // Simpan data
+                currentData.sd = data.video_data.nwm_video_url;
+                currentData.hd = data.video_data.nwm_video_url_HQ;
+                currentData.music = data.music; // fix variable name matching
+                currentData.mp3 = data.music;
+                currentData.id = data.id || "tiktok_video";
+
+                // UI Updates
+                videoPlayer.poster = data.cover;
+                videoPlayer.src = data.video_data.nwm_video_url;
+
+                if (data.music) {
+                    btnMusic.style.display = 'flex';
+                } else {
+                    btnMusic.style.display = 'none';
+                }
+
+                captionText.innerText = data.desc || "Tidak ada caption.";
+
+                loader.style.display = 'none';
+                resultArea.style.display = 'block';
+            } else {
+                throw new Error("Data tidak lengkap.");
+            }
+        } catch (error) {
+            loader.style.display = 'none';
+            alert("Gagal memproses. Cek link atau koneksi.");
+            console.error(error);
+        }
+    }
+
+    // FUNGSI FORCE DOWNLOAD
+    async function forceDownload(btn, type) {
+        const url = currentData[type];
+        if (!url) return;
+
+        const originalText = btn.innerText;
+        btn.innerText = "Mengunduh...";
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Network response was not ok");
+            
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            const ext = type === 'mp3' ? 'mp3' : 'mp4';
+            const fileName = `tiktok_${currentData.id}_${type}.${ext}`;
+
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(a);
+
+        } catch (error) {
+            console.error("Gagal download blob:", error);
+            alert("Download otomatis gagal (CORS). Membuka tab baru...");
+            window.open(url, '_blank');
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    function copyCaption() {
+        const text = document.getElementById('captionText').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Caption berhasil disalin!");
+        }).catch(err => {
+            alert("Gagal menyalin teks.");
+        });
+    }
+</script>
+
+</body>
+      </html>
