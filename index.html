@@ -181,7 +181,7 @@
         try {
             const targetUrl = encodeURIComponent(input.value);
             // SUDAH DIPERBAIKI: Link hardcoded dihapus, jadi bersih
-            const apiUrl = `https://api.ryzumi.vip/api/downloader/v2/ttdl?url=https%3A%2F%2Fvm.tiktok.com%2FZSHEJsU7kNECn-2iOPg%2F=${targetUrl}`;
+            const apiUrl = `API_KEY=${targetUrl}`;
             
             const response = await fetch(apiUrl);
             const json = await response.json();
