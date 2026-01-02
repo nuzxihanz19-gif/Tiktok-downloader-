@@ -179,11 +179,9 @@
         videoPlayer.poster = "";
 
         try {
-            const targetUrl = encodeURIComponent(input.value);
-            // SUDAH DIPERBAIKI: Link hardcoded dihapus, jadi bersih
-            const apiUrl = `API_KEY=${targetUrl}`;
-            
-            const response = await fetch(apiUrl);
+            const response = await fetch(
+    `/api/tiktok?url=${encodeURIComponent(input.value)}`
+);
             const json = await response.json();
 
             if (json.data && json.data.video_data) {
@@ -270,4 +268,4 @@
 </script>
 
 </body>
-      </html>
+</html>
