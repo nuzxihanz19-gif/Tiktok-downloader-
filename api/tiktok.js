@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const apiKey = process.env.API_KEY;
 
     const apiUrl =
-      "https://api.ryzumi.vip/api/downloader/v2/ttdl" +
+      "https://api.ryzumi.net/api/downloader/v2/ttdl" +
       "?url=" + encodeURIComponent(url) +
       "&apikey=" + apiKey;
 
